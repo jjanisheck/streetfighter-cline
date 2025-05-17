@@ -1,3 +1,4 @@
+
 import GameEngine from '../components/GameEngine'
 
 export default function Home() {
@@ -10,4 +11,5 @@ export default function Home() {
       <GameEngine />
     </div>
   )
+
 }

@@ -1,3 +1,4 @@
+
 # Street Fighter Clone
 
 A simplified single-player fighting game built with **Next.js**, **Tailwind CSS** and the HTML5 **Canvas** API. The project ships with placeholder art and is ready to deploy on Netlify.
@@ -58,3 +59,4 @@ All images and audio in `public/` are placeholders. Replace them with your own s
 ---
 
 This project is provided for educational purposes only.
+
