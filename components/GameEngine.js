@@ -72,14 +72,12 @@ export default function GameEngine() {
 
       // Helper function to track loaded images
       const onImageLoad = (name) => {
-        console.log(`Sprite loaded successfully: ${name}`);
         loadedCount++;
         checkAllLoaded();
       };
 
       // Helper function to handle load errors
       const onImageError = (imgName) => {
-        console.error(`Failed to load sprite: ${imgName}`);
         errors.push(imgName);
         errorCount++;
         checkAllLoaded();
@@ -88,9 +86,6 @@ export default function GameEngine() {
       // Check if all images have been processed (loaded or failed)
       const checkAllLoaded = () => {
         if (loadedCount + errorCount === totalImages) {
-          console.log(
-            `All sprites processed: ${loadedCount} loaded, ${errorCount} failed`
-          );
           setLoadingErrors(errors);
           setSpritesLoaded(true);
         }
@@ -99,6 +94,7 @@ export default function GameEngine() {
       // Load player sprites with event handlers
       const loadSprite = (name, src) => {
         const img = new window.Image();
+        img.crossOrigin = "anonymous";
         img.onload = () => onImageLoad(name);
         img.onerror = () => onImageError(src);
         img.src = src;
@@ -130,6 +126,7 @@ export default function GameEngine() {
 
       // Load NPC sprite
       npcSpriteRef.current = new window.Image();
+      npcSpriteRef.current.crossOrigin = "anonymous";
       npcSpriteRef.current.onload = () => onImageLoad("npc");
       npcSpriteRef.current.onerror = () => {
         onImageError("NPC sprite");
@@ -167,19 +164,24 @@ export default function GameEngine() {
       y: groundRef.current,
     }));
     backgroundRef.current = new Image();
+    backgroundRef.current.crossOrigin = "anonymous";
     backgroundRef.current.src = "/backgrounds/stage.png";
 
+    const preventKeys = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
+
     function handleKeyDown(e) {
+      if (preventKeys.includes(e.code)) e.preventDefault();
       keys.current[e.code] = true;
       inputBuffer.current.push({ code: e.code, time: Date.now() });
       // keep last 3 inputs
       if (inputBuffer.current.length > 3) inputBuffer.current.shift();
     }
     function handleKeyUp(e) {
+      if (preventKeys.includes(e.code)) e.preventDefault();
       keys.current[e.code] = false;
     }
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("keydown", handleKeyDown, { passive: false });
+    window.addEventListener("keyup", handleKeyUp, { passive: false });
     let aiInterval;
 
     function chooseNpcAction() {
@@ -340,25 +342,6 @@ export default function GameEngine() {
       }`;
       let fallbackImg = playerSpritesRef.current[fallbackKey];
 
-      // Debug output (once per second to reduce console spam)
-      if (Math.floor(Date.now() / 1000) % 5 === 0) {
-        console.log("Draw player:", {
-          action: player.action,
-          position: `${player.x},${player.y}`,
-          size: `${player.width}×${player.height}`,
-          spriteAvailable: spriteImg ? "yes" : "no",
-          spriteComplete: spriteImg
-            ? spriteImg.complete
-              ? "yes"
-              : "no"
-            : "n/a",
-          naturalWidth: spriteImg ? spriteImg.naturalWidth : "n/a",
-          usingFallback:
-            !spriteImg || !spriteImg.complete || !spriteImg.naturalWidth
-              ? "yes"
-              : "no",
-        });
-      }
 
       // Try to use the sprite image first, if it's properly loaded
       if (spriteImg && spriteImg.complete && spriteImg.naturalWidth > 0) {
