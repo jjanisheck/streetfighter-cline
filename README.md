@@ -63,3 +63,4 @@ Sprite art is scaled automatically at runtime to **6.25%** of the canvas width a
 
 This project is provided for educational purposes only.
 
+
