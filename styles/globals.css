@@ -2,6 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+body {
+  /* Prevent the window from scrolling when the game is played */
+  margin: 0;
+  overflow: hidden;
+}
+
 .canvas-container {
   @apply flex justify-center items-center mt-4;
 }
