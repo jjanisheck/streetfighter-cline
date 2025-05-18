@@ -192,7 +192,9 @@ export default function GameEngine() {
 
     function draw() {
       ctx.clearRect(0, 0, canvas.width, canvas.height)
-      if (backgroundRef.current?.complete) {
+
+      if (backgroundRef.current && backgroundRef.current.complete) {
+
         ctx.drawImage(backgroundRef.current, 0, 0, canvas.width, canvas.height)
       }
       ctx.fillStyle = 'blue'
