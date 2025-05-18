@@ -169,17 +169,21 @@ export default function GameEngine() {
     backgroundRef.current = new Image();
     backgroundRef.current.src = "/backgrounds/stage.png";
 
+    const preventKeys = ["ArrowLeft", "ArrowRight", "ArrowUp", "ArrowDown"];
+
     function handleKeyDown(e) {
+      if (preventKeys.includes(e.code)) e.preventDefault();
       keys.current[e.code] = true;
       inputBuffer.current.push({ code: e.code, time: Date.now() });
       // keep last 3 inputs
       if (inputBuffer.current.length > 3) inputBuffer.current.shift();
     }
     function handleKeyUp(e) {
+      if (preventKeys.includes(e.code)) e.preventDefault();
       keys.current[e.code] = false;
     }
-    window.addEventListener("keydown", handleKeyDown);
-    window.addEventListener("keyup", handleKeyUp);
+    window.addEventListener("keydown", handleKeyDown, { passive: false });
+    window.addEventListener("keyup", handleKeyUp, { passive: false });
     let aiInterval;
 
     function chooseNpcAction() {
