@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 
 const GRAVITY = 0.5
-const GROUND = 350
 const PLAYER_SPEED = 5
 const JUMP_SPEED = -10
 
 const INITIAL_STATE = {
   x: 100,
-  y: GROUND,
+  y: 0,
   vx: 0,
   vy: 0,
   width: 50,
@@ -18,7 +17,7 @@ const INITIAL_STATE = {
 
 const NPC_STATE = {
   x: 650,
-  y: GROUND,
+  y: 0,
   vx: 0,
   vy: 0,
   width: 50,
@@ -29,6 +28,9 @@ const NPC_STATE = {
 
 export default function GameEngine() {
   const canvasRef = useRef(null)
+  const backgroundRef = useRef(null)
+  const groundRef = useRef(350)
+  const [spriteSize, setSpriteSize] = useState({ width: 50, height: 50 })
   const [player, setPlayer] = useState({ ...INITIAL_STATE })
   const [npc, setNpc] = useState({ ...NPC_STATE })
   const [round, setRound] = useState(1)
@@ -51,6 +53,16 @@ export default function GameEngine() {
   useEffect(() => {
     const canvas = canvasRef.current
     const ctx = canvas.getContext('2d')
+    canvas.width = window.innerWidth
+    canvas.height = window.innerHeight
+    const sw = canvas.width * 0.0625
+    const sh = canvas.height * 0.125
+    setSpriteSize({ width: sw, height: sh })
+    groundRef.current = canvas.height - sh
+    setPlayer(p => ({ ...p, width: sw, height: sh, x: canvas.width * 0.125, y: groundRef.current }))
+    setNpc(n => ({ ...n, width: sw, height: sh, x: canvas.width * 0.8125, y: groundRef.current }))
+    backgroundRef.current = new Image()
+    backgroundRef.current.src = '/backgrounds/stage.png'
 
     function handleKeyDown(e) {
       keys.current[e.code] = true
@@ -114,7 +126,7 @@ export default function GameEngine() {
       else if (keys.current['ArrowRight']) p.vx = PLAYER_SPEED
       else p.vx = 0
 
-      if (keys.current['ArrowUp'] && p.y === GROUND) {
+      if (keys.current['ArrowUp'] && p.y === groundRef.current) {
         p.vy = JUMP_SPEED
       }
 
@@ -155,11 +167,11 @@ export default function GameEngine() {
       p.vy += GRAVITY
       p.y += p.vy
       p.x += p.vx
-      if (p.y > GROUND) {
-        p.y = GROUND
+      if (p.y > groundRef.current) {
+        p.y = groundRef.current
         p.vy = 0
       }
-      p.x = Math.max(0, Math.min(750, p.x))
+      p.x = Math.max(0, Math.min(canvas.width - spriteSize.width, p.x))
       setPlayer(p)
     }
 
@@ -169,17 +181,20 @@ export default function GameEngine() {
         newN.vy += GRAVITY
         newN.y += newN.vy
         newN.x += newN.vx
-        if (newN.y > GROUND) {
-          newN.y = GROUND
+        if (newN.y > groundRef.current) {
+          newN.y = groundRef.current
           newN.vy = 0
         }
-        newN.x = Math.max(0, Math.min(750, newN.x))
+        newN.x = Math.max(0, Math.min(canvas.width - spriteSize.width, newN.x))
         return newN
       })
     }
 
     function draw() {
-      ctx.clearRect(0, 0, 800, 400)
+      ctx.clearRect(0, 0, canvas.width, canvas.height)
+      if (backgroundRef.current?.complete) {
+        ctx.drawImage(backgroundRef.current, 0, 0, canvas.width, canvas.height)
+      }
       ctx.fillStyle = 'blue'
       ctx.fillRect(player.x, player.y - player.height, player.width, player.height)
       ctx.fillStyle = 'red'
@@ -239,7 +254,7 @@ export default function GameEngine() {
 
   return (
     <div>
-      <div className="relative w-full max-w-3xl mx-auto">
+      <div className="relative w-screen h-screen">
         <div className="flex justify-between mb-2">
           <div className="w-1/2 mr-2 health-bar">
             <div
@@ -255,7 +270,7 @@ export default function GameEngine() {
             ></div>
           </div>
         </div>
-        <canvas ref={canvasRef} id="gameCanvas" width="800" height="400" className="border"></canvas>
+        <canvas ref={canvasRef} id="gameCanvas" width="800" height="400" className="border w-full h-full"></canvas>
         {overlay && <div className="overlay">{overlay}</div>}
       </div>
     </div>
