@@ -4,7 +4,7 @@
 A simplified single-player fighting game built with **Next.js**, **Tailwind CSS** and the HTML5 **Canvas** API. The project ships with placeholder art and is ready to deploy on Netlify.
 
 ## Features
-- 800×400 canvas centered on the page
+ - Canvas automatically scales to fill the browser window
 - Five rounds against an NPC with increasing difficulty
 - Health bars and a round timer
 - Keyboard controls with special move detection
@@ -36,6 +36,7 @@ The `out/` directory can be deployed directly. The included `netlify.toml` confi
 - `styles/` – global styles and Tailwind configuration
 - `public/sprites/` – placeholder character sprites
 - `public/audio/` – placeholder sound effects
+- `public/backgrounds/` – optional background images (e.g. `stage.png`)
 - `netlify.toml` – Netlify build settings
 
 ## Controls
@@ -55,6 +56,8 @@ Each round lasts **60 seconds**. Win by knocking the NPC to 0&nbsp;HP or by havi
 
 ## Assets
 All images and audio in `public/` are placeholders. Replace them with your own sprites and sound effects to customise the game.
+Background images should go in `public/backgrounds/` (e.g. `public/backgrounds/stage.png`).
+Sprite art is scaled automatically at runtime to **6.25%** of the canvas width and **12.5%** of the canvas height.
 
 ---
 
