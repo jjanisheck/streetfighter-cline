@@ -4,11 +4,13 @@
   "scripts": {
     "dev": "NODE_OPTIONS='--openssl-legacy-provider' node scripts/dev.js",
     "dev:next": "NODE_OPTIONS='--openssl-legacy-provider' npx next dev -p 3002",
+    "dev:server": "NODE_OPTIONS='--openssl-legacy-provider' node server.js",
     "build": "NODE_OPTIONS='--openssl-legacy-provider' node scripts/build.js",
     "start": "node scripts/start.js",
     "test": "node test-runner.js"
   },
   "dependencies": {
+    "express": "^5.1.0",
     "next": "9.1.1",
     "react": "16.11.0",
     "react-dom": "16.11.0",
