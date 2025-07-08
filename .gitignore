@@ -26,3 +26,12 @@ yarn-error.log*
 .vscode/
 *.swp
 *.swo
+
+# Claude
+.claude/
+.hive-mind/
+memory/
+claude-flow
+claude-flow.bat
+claude-flow.ps1
+CLAUDE.md

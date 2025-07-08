@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 
-const GRAVITY = 0.8;
-const PLAYER_SPEED = 4;
-const JUMP_SPEED = -15;
+const GRAVITY = 0.7;
+const PLAYER_SPEED = 5;
+const JUMP_SPEED = -16;
 const CANVAS_WIDTH = 800;
 const CANVAS_HEIGHT = 400;
 const GROUND_Y = 320;
@@ -10,28 +10,28 @@ const GROUND_Y = 320;
 // Animation definitions - using available sprites only
 const ANIMATIONS = {
   player: {
-    idle: { sprites: [1], speed: 30 },
-    walk: { sprites: [1, 2], speed: 8 },
-    jump: { sprites: [3], speed: 30 },
-    punch: { sprites: [2, 4], speed: 5 },
-    kick: { sprites: [3, 4], speed: 5 },
-    block: { sprites: [1], speed: 30 },
-    hit: { sprites: [3], speed: 10 },
-    special: { sprites: [2, 4, 2, 4], speed: 3 },
-    crouch: { sprites: [1], speed: 30 },
-    victory: { sprites: [4], speed: 30 }
+    idle: { sprites: [1, 2, 3, 4, 3, 2], speed: 10 },
+    walk: { sprites: [5, 6, 7, 8, 9, 10], speed: 6 },
+    jump: { sprites: [11, 12, 13], speed: 8 },
+    punch: { sprites: [14, 15, 16], speed: 4 },
+    kick: { sprites: [17, 18, 19, 20], speed: 4 },
+    block: { sprites: [2], speed: 30 },
+    hit: { sprites: [13, 14], speed: 8 },
+    special: { sprites: [15, 16, 17, 18, 19, 20, 19, 18, 17, 16], speed: 3 },
+    crouch: { sprites: [3], speed: 30 },
+    victory: { sprites: [1, 4, 1, 4], speed: 15 }
   },
   npc: {
-    idle: { sprites: [1], speed: 30 },
-    walk: { sprites: [1], speed: 30 },
-    jump: { sprites: [1], speed: 30 },
-    punch: { sprites: [1], speed: 30 },
-    kick: { sprites: [1], speed: 30 },
-    block: { sprites: [1], speed: 30 },
-    hit: { sprites: [1], speed: 30 },
-    special: { sprites: [1], speed: 30 },
-    crouch: { sprites: [1], speed: 30 },
-    defeat: { sprites: [1], speed: 30 }
+    idle: { sprites: [1, 2, 3, 4], speed: 12 },
+    walk: { sprites: [5, 6, 7, 8, 9, 10], speed: 8 },
+    jump: { sprites: [11, 12, 13], speed: 10 },
+    punch: { sprites: [14, 15, 16], speed: 5 },
+    kick: { sprites: [17, 18, 19, 20], speed: 5 },
+    block: { sprites: [2], speed: 30 },
+    hit: { sprites: [13, 14], speed: 10 },
+    special: { sprites: [15, 16, 17, 18, 19, 20], speed: 4 },
+    crouch: { sprites: [3], speed: 30 },
+    defeat: { sprites: [11, 12], speed: 15 }
   }
 };
 
@@ -113,8 +113,8 @@ export default function GameEngine() {
     if (typeof window === "undefined") return;
 
     let loadedCount = 0;
-    const playerSpritesToLoad = [1, 2, 3, 4]; // Only existing player sprites
-    const npcSpritesToLoad = [1]; // Only existing NPC sprites
+    const playerSpritesToLoad = Array.from({ length: 20 }, (_, i) => i + 1); // Load first 20 sprites for better animations
+    const npcSpritesToLoad = Array.from({ length: 20 }, (_, i) => i + 1); // Load first 20 sprites for NPC animations
     const totalSprites = playerSpritesToLoad.length + npcSpritesToLoad.length + 1; // + 1 for background
 
     const checkAllLoaded = () => {
@@ -230,8 +230,11 @@ export default function GameEngine() {
   const playSound = (soundName) => {
     try {
       if (sounds.current[soundName]) {
-        sounds.current[soundName].currentTime = 0; // Reset to start
-        sounds.current[soundName].play().catch(e => {
+        const audio = sounds.current[soundName];
+        // Clone and play to allow overlapping sounds
+        const clone = audio.cloneNode();
+        clone.volume = 0.3;
+        clone.play().catch(e => {
           // Silently handle autoplay restrictions
           console.log(`Could not play sound: ${soundName}`);
         });
